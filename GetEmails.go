@@ -281,7 +281,7 @@ func(ec *EmailClient) ParseMessage(msg imap.Message, section imap.BodySectionNam
 	return message, nil
 }
 
-func(ec *EmailClient) GetPreview(uid uint32) (MessagePart, MessagePart, error) {
+func(ec *EmailClient) GetPreviewAndICS(uid uint32) (MessagePart, MessagePart, error) {
 	body, section, err := ec.GetBody(uid)
 	if err != nil {
 		return MessagePart{},MessagePart{}, err
@@ -350,6 +350,12 @@ func(ec *EmailClient) GetPreview(uid uint32) (MessagePart, MessagePart, error) {
 		preview.Name = "text"
 		preview.PartType = "raw"
 		preview.Part = []byte("No Preview Found")
+	}
+
+	if ics.PartType != "attachment" {
+		ics.Name = "NONE"
+		ics.PartType = "NONE"
+		ics.Part = []byte("NONE")
 	}
 
 
