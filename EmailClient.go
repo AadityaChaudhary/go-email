@@ -10,15 +10,19 @@ import (
 )
 
 type EmailClient struct {
-	Config EmailConfig
+	Config 		EmailConfig
 	Token		*oauth2.Token
 	Client		*client.Client
 	IdleClient 	*idle.Client
+	EmailAddress string
+
 }
 
 func NewEmailClient(configsPath string, cfg string) (EmailClient,error) {
 
 		var emailClient EmailClient
+		emailClient.EmailAddress = cfg
+
 		var configs map[string]EmailConfig
 		if data, err := ioutil.ReadFile(configsPath); err != nil {
 			return EmailClient{}, err
