@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/emersion/go-imap"
 	"github.com/emersion/go-message/mail"
+	_ "github.com/emersion/go-message/charset"
 	"io"
 	"io/ioutil"
 	"log"
@@ -162,6 +163,8 @@ func(ec *EmailClient) GetLast(amount uint32) (uint32, uint32) {
 	var from uint32
 	var to uint32
 
+	ec.SelectMailBox(ec.Client.Mailbox().Name)
+
 	if ec.Client.Mailbox().Messages - amount < 0 {
 		from = 0
 	} else {
@@ -172,6 +175,8 @@ func(ec *EmailClient) GetLast(amount uint32) (uint32, uint32) {
 }
 
 func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32) []imap.Envelope {
+
+	ec.SelectMailBox(ec.Client.Mailbox().Name)
 
 	seqset := new(imap.SeqSet)
 	for _, val := range msgs {
