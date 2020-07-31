@@ -60,6 +60,7 @@ func authenticate(c *client.Client, cfg *oauth2.Config, username string) (sasl.C
 
 	// Login to the IMAP server with XOAUTH2
 	saslClient := sasl.NewXoauth2Client(username, token.AccessToken)
+
 	//log.Println("new xoauth client error")
 	return saslClient, nil
 }

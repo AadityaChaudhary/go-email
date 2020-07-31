@@ -3,8 +3,8 @@ package go_email
 import (
 	"errors"
 	"github.com/emersion/go-imap"
-	"github.com/emersion/go-message/mail"
 	_ "github.com/emersion/go-message/charset"
+	"github.com/emersion/go-message/mail"
 	"io"
 	"io/ioutil"
 	"log"
