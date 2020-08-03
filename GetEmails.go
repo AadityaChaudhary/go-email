@@ -222,7 +222,7 @@ func(ec *EmailClient) DetermineAutomated(msg mail.Reader) bool {
 
 	var from, _ = msg.Header.AddressList("From");
 	var fromAddress = from[0].Address
-	if strings.Contains(fromAddress, "noreply") && strings.Contains(fromAddress, "no-reply") && strings.Contains(fromAddress, "no_reply") {
+	if strings.Contains(fromAddress, "noreply") || strings.Contains(fromAddress, "no-reply") || strings.Contains(fromAddress, "no_reply") {
 		return true
 	}
 
