@@ -64,23 +64,6 @@ func authenticate(c *client.Client, cfg *oauth2.Config, username string) (sasl.C
 	return saslClient, nil
 }
 
-func(ec *EmailClient) GetAuthURL() (string, string, error) {
-	ec.Config.Config.RedirectURL = ec.Config.AuthURI
-	spt,err := ec.Client.SupportAuth(sasl.Xoauth2)
-	if err != nil {
-		return "","", err
-	}
-	if  !spt {
-		return "", "", errors.New("XOAUTH2 not supported by the server")
-	}
-	state, err := oauthdialog.GenerateState()
-	if err != nil {
-		log.Fatal(err)
-	}
-	url := ec.Config.Config.AuthCodeURL(state)
-	return url, state, nil
-}
-
 func(ec *EmailClient) GetToken(code string) error {
 	ec.Config.Config.RedirectURL = ec.Config.ExchangeURI
 	token, err := ec.Config.Config.Exchange(oauth2.NoContext, code)

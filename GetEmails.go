@@ -3,6 +3,7 @@ package go_email
 import (
 	"errors"
 	"github.com/emersion/go-imap"
+	_ "github.com/emersion/go-message/charset"
 	"github.com/emersion/go-message/mail"
 	"io"
 	"io/ioutil"
@@ -197,6 +198,37 @@ func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32) []imap.Envelope {
 
 }
 
+func(ec *EmailClient) DetermineAutomated(msg mail.Reader) bool {
+	log.Println("Yash Trivedi 99");
+	var autoSubmitted = msg.Header.Get("Auto-submitted");
+	var autoResponseSuppress = msg.Header.Get("X-Auto-Response-Suppress");
+	var listId = msg.Header.Get("List-Id");
+	var listUnsubscribe = msg.Header.get("List-Unsubscribe");
+	var feedbackID = msg.Header.Get("Feedback-ID");
+
+	var MSFBL = msg.Header.Get("X-MSFBL");
+	var Loop = msg.Header.Get("X-Loop");
+	var Autoreply = msg.Header.Get("X-Autoreply");
+
+	if autoSubmitted != nil || autoResponseSuppress != nil || listId != nil || listUnsubscribe != nil || feedbackID != nil || MSFBL != nil || Loop != nil || Autoreply != nil {
+		return true
+	}
+
+	var precedence = msg.Header.Get("Precedence");
+
+	if precedence == "bulk" || precedence != "auto_reply" || precedence != "list" {
+		return true
+	}
+
+	var from, _ = msg.Header.AddressList("From");
+	var fromAddress = from[0].Address
+	if strings.Contains(fromAddress, "noreply") && strings.Contains(fromAddress, "no-reply") && strings.Contains(fromAddress, "no_reply") {
+		return true
+	}
+
+	return false;
+}
+
 func(ec *EmailClient) ParseMessage(msg imap.Message, section imap.BodySectionName) (Message, error) {
 	r := msg.GetBody(&section)
 	if r == nil {
@@ -208,6 +240,7 @@ func(ec *EmailClient) ParseMessage(msg imap.Message, section imap.BodySectionNam
 	if err != nil {
 		log.Fatal(err)
 	}
+
 
 	//header := mr.Header
 	//if date, err := header.Date(); err == nil {
@@ -296,6 +329,8 @@ func(ec *EmailClient) GetPreviewAndICS(uid uint32) (MessagePart, MessagePart, er
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println(ec.DetermineAutomated(*mr))
+
 
 	var preview MessagePart
 	var ics MessagePart
@@ -303,12 +338,12 @@ func(ec *EmailClient) GetPreviewAndICS(uid uint32) (MessagePart, MessagePart, er
 	for {
 		p, err := mr.NextPart()
 
+
 		if err == io.EOF {
 			break
 		} else if err != nil {
 			return MessagePart{},MessagePart{}, err
 		}
-
 		switch h := p.Header.(type) {
 		case *mail.InlineHeader:
 			b, _ := ioutil.ReadAll(p.Body)
