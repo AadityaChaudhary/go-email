@@ -286,7 +286,7 @@ func(ec *EmailClient) ParseMessage(msg imap.Message, section imap.BodySectionNam
 	return message, nil
 }
 
-func(ec *EmailClient) GetPreviewAndICS(uid uint32) (MessagePart, MessagePart, error) {
+func(ec *EmailClient) GetPreviewAndICS(uid uint32, previewCharSize int) (MessagePart, MessagePart, error) {
 	body, section, err := ec.GetBody(uid)
 	if err != nil {
 		return MessagePart{},MessagePart{}, err
@@ -323,7 +323,12 @@ func(ec *EmailClient) GetPreviewAndICS(uid uint32) (MessagePart, MessagePart, er
 
 				preview.Name = "text"
 				preview.PartType = "raw"
-				preview.Part = b
+				if len(b) > previewCharSize {
+					preview.Part = b[:previewCharSize+1]
+				} else {
+					preview.Part = b
+				}
+
 
 			}
 

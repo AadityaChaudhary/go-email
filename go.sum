@@ -1,4 +1,6 @@
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+github.com/AadityaChaudhary/go-oauthdialog v0.0.0-20160528192336-53626322c75d h1:HS+2Fy/NlEQd/jBPCarEvb1gBKdUOHvZw+AIju9yNyA=
+github.com/AadityaChaudhary/go-oauthdialog v0.0.0-20160528192336-53626322c75d/go.mod h1:a2iNqY4rSi3tRKxu9KYzOsycclyZlusdy22MuAZE0wQ=
 github.com/AadityaChaudhary/go-sasl v0.0.0-20161031173500-1e2af45c974c h1:TaIHJ/hstigSD8S4whMIVDKg2Kpf8oJX6e1JL565R7g=
 github.com/AadityaChaudhary/go-sasl v0.0.0-20161031173500-1e2af45c974c/go.mod h1:LvTqjdTAIBDHeVJxnEmjNnz7sYp+PCZwJ3hfk06THJo=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -11,11 +13,8 @@ github.com/emersion/go-imap-idle v0.0.0-20200601154248-f05f54664cc4/go.mod h1:o1
 github.com/emersion/go-message v0.11.1/go.mod h1:C4jnca5HOTo4bGN9YdqNQM9sITuT3Y0K6bSUw9RklvY=
 github.com/emersion/go-message v0.12.0 h1:mZnv35eZ6lB6EftTQBgYXspOH0FQdhpFhSUhA9i6/Zg=
 github.com/emersion/go-message v0.12.0/go.mod h1:C4jnca5HOTo4bGN9YdqNQM9sITuT3Y0K6bSUw9RklvY=
-github.com/emersion/go-oauthdialog v0.0.0-20160528192336-53626322c75d h1:VxE3LpiPQ8qVtDz4G3hcy4THFNUa1x+mUiLBZ0tIrQ4=
-github.com/emersion/go-oauthdialog v0.0.0-20160528192336-53626322c75d/go.mod h1:zbRvsst9FFTRc8kdqAQHziigyi5zGptw1QTsxEy+A8c=
+github.com/emersion/go-sasl v0.0.0-20191210011802-430746ea8b9b h1:uhWtEWBHgop1rqEk2klKaxPAkVDCXexai6hSuRQ7Nvs=
 github.com/emersion/go-sasl v0.0.0-20191210011802-430746ea8b9b/go.mod h1:G/dpzLu16WtQpBfQ/z3LYiYJn3ZhKSGWn83fyoyQe/k=
-github.com/emersion/go-sasl v0.0.0-20200509203442-7bfe0ed36a21 h1:OJyUGMJTzHTd1XQp98QTaHernxMYzRaOasRir9hUlFQ=
-github.com/emersion/go-sasl v0.0.0-20200509203442-7bfe0ed36a21/go.mod h1:iL2twTeMvZnrg54ZoPDNfJaJaqy0xIQFuBdrLsmspwQ=
 github.com/emersion/go-textwrapper v0.0.0-20160606182133-d0e65e56babe h1:40SWqY0zE3qCi6ZrtTf5OUdNm5lDnGnjRSq9GgmeTrg=
 github.com/emersion/go-textwrapper v0.0.0-20160606182133-d0e65e56babe/go.mod h1:aqO8z8wPrjkscevZJFVE1wXJrLpC5LtJG7fqLOsPb2U=
 github.com/golang/protobuf v1.2.0 h1:P3YflyNX/ehuJFLhxviNdFxQPkGK5cDcApsge1SqnvM=

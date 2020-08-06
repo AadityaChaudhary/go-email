@@ -3,9 +3,9 @@ package go_email
 import (
 	"encoding/json"
 	"errors"
+	"github.com/AadityaChaudhary/go-oauthdialog"
 	"github.com/AadityaChaudhary/go-sasl"
 	"github.com/emersion/go-imap/client"
-	"github.com/emersion/go-oauthdialog"
 	"golang.org/x/oauth2"
 	"io/ioutil"
 	"log"
@@ -29,6 +29,7 @@ func authenticate(c *client.Client, cfg *oauth2.Config, username string) (sasl.C
 	if data ,err := ioutil.ReadFile("token.json"); err != nil {
 
 		// Ask for the user to login with his Google account
+
 		code, err := oauthdialog.Open(cfg)
 
 		if err != nil {
@@ -38,7 +39,7 @@ func authenticate(c *client.Client, cfg *oauth2.Config, username string) (sasl.C
 
 		// Get a token from the returned code
 		// This token can be saved in a secure store to be reused later
-		token, err := cfg.Exchange(oauth2.NoContext, code)
+		token, err := cfg.Exchange(oauth2.NoContext, code, oauth2.AccessTypeOffline)
 		file, err := json.Marshal(token)
 
 		_ = ioutil.WriteFile("token.json", file, os.ModePerm)
@@ -96,7 +97,7 @@ func(ec *EmailClient) AllInOneAuth(username string) (oauth2.Token, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	token, err := ec.Config.Config.Exchange(oauth2.NoContext, code)
+	token, err := ec.Config.Config.Exchange(oauth2.NoContext, code, oauth2.AccessTypeOffline)
 	if err != nil {
 		return oauth2.Token{}, err
 	}
