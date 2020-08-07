@@ -174,6 +174,21 @@ func(ec *EmailClient) GetLast(amount uint32) (uint32, uint32) {
 	return from, to  //from, to
 }
 
+func(ec *EmailClient) GetPage(page int, perPage int) (uint32,uint32) {
+	var from uint32
+	var to uint32
+
+	ec.SelectMailBox(ec.Client.Mailbox().Name)
+
+	from = ec.Client.Mailbox().Messages - uint32(perPage * page)
+	if from < 0 {
+		from = 0
+	}
+	to = from + uint32(perPage)
+
+	return from,to
+}
+
 func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32) []imap.Envelope {
 
 	ec.SelectMailBox(ec.Client.Mailbox().Name)
