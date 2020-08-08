@@ -186,7 +186,7 @@ func(ec *EmailClient) GetPage(page int32, perPage int32) (uint32,uint32) {
 	}
 	to = from + uint32(perPage)
 
-	return from,to
+	return from,to - 1
 }
 
 func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32) []imap.Envelope {
