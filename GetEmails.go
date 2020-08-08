@@ -174,7 +174,7 @@ func(ec *EmailClient) GetLast(amount uint32) (uint32, uint32) {
 	return from, to  //from, to
 }
 
-func(ec *EmailClient) GetPage(page int, perPage int) (uint32,uint32) {
+func(ec *EmailClient) GetPage(page int32, perPage int32) (uint32,uint32) {
 	var from uint32
 	var to uint32
 
