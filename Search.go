@@ -12,6 +12,7 @@ type Crit struct {
 	SentBefore 	string
 
 	From 		[]string
+	To 			[]string
 	Bcc 		[]string
 	Cc 			[]string
 
@@ -28,6 +29,9 @@ func(c *Crit) ToSearchCriteria() (*imap.SearchCriteria, error) {
 
 	for _, val := range c.From {
 		criteria.Header.Add("from", val)
+	}
+	for _, val := range c.To {
+		criteria.Header.Add("to", val)
 	}
 	for _, val := range c.Cc {
 		criteria.Header.Add("cc", val)

@@ -165,6 +165,7 @@ func(ec *EmailClient) GetLast(amount uint32) (uint32, uint32) {
 
 	ec.SelectMailBox(ec.Client.Mailbox().Name)
 
+
 	if ec.Client.Mailbox().Messages - amount < 0 {
 		from = 0
 	} else {
