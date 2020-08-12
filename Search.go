@@ -6,10 +6,10 @@ import (
 )
 
 type Crit struct {
-	Since 		string
-	Before 		string
-	SentSince 	string
-	SentBefore 	string
+	Since 		time.Time
+	Before 		time.Time
+	SentSince 	time.Time
+	SentBefore 	time.Time
 
 	From 		[]string
 	To 			[]string
@@ -44,23 +44,10 @@ func(c *Crit) ToSearchCriteria() (*imap.SearchCriteria, error) {
 	criteria.Text = c.Text
 	criteria.WithFlags = c.WithFlags
 
-	var err error
-
-	if c.Before != "" {
-		criteria.Before, err = time.Parse(time.RFC3339, c.Before)
-	}
-	if c.Since != "" {
-		criteria.Since, err = time.Parse(time.RFC3339, c.Since)
-	}
-	if c.SentBefore != "" {
-		criteria.SentBefore, err = time.Parse(time.RFC3339, c.SentBefore)
-	}
-	if c.SentSince != "" {
-		criteria.SentSince, err = time.Parse(time.RFC3339, c.SentSince)
-	}
-	if err != nil {
-		return nil, err
-	}
+	criteria.Before = c.Before
+	criteria.Since = c.Since
+	criteria.SentBefore = c.SentBefore
+	criteria.SentSince = c.SentSince
 
 	return criteria, nil
 }
