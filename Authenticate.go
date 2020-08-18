@@ -79,8 +79,10 @@ func(ec *EmailClient) GetToken(code string) error {
 
 func(ec *EmailClient) Authenticate(username string) error {
 
+	ec.Auth = sasl.NewXoauth2Client(username, ec.Token.AccessToken)
+
 	//log.Println(token)
-	err := ec.Client.Authenticate(sasl.NewXoauth2Client(username, ec.Token.AccessToken))
+	err := ec.Client.Authenticate(ec.Auth)
 	return err
 
 }

@@ -2,6 +2,7 @@ package go_email
 
 import (
 	"encoding/json"
+	"github.com/AadityaChaudhary/go-sasl"
 	"github.com/emersion/go-imap-idle"
 	"github.com/emersion/go-imap/client"
 	"golang.org/x/oauth2"
@@ -10,11 +11,12 @@ import (
 )
 
 type EmailClient struct {
-	Config 		EmailConfig
-	Token		*oauth2.Token
-	Client		*client.Client
-	IdleClient 	*idle.Client
-	EmailAddress string
+	Config 			EmailConfig
+	Token			*oauth2.Token
+	Client			*client.Client
+	IdleClient 		*idle.Client
+	EmailAddress	string
+	Auth 		 	sasl.Client
 
 }
 
