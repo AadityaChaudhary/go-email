@@ -9,17 +9,11 @@ import (
 	"io/ioutil"
 	"log"
 	"strings"
-	"time"
 )
 
 type Envelope struct {
-	Sent 	time.Time
-	Subject	string
-
-	To 		[]mail.Address
-	From 	[]mail.Address
-	Cc 		[]mail.Address
-	Bcc 	[]mail.Address
+	Envelope 	imap.Envelope
+	Flags 		[]string
 }
 
 
@@ -108,7 +102,7 @@ func(ec *EmailClient) SelectMailBox(mName string) (error) {
 
 }
 
-func(ec *EmailClient) GetEnvelopes(from uint32, to uint32) []imap.Envelope {
+func(ec *EmailClient) GetEnvelopes(from uint32, to uint32) []Envelope {
 
 	if from > ec.Client.Mailbox().Messages || to > ec.Client.Mailbox().Messages {
 		log.Fatal("ruh roh")
@@ -121,13 +115,17 @@ func(ec *EmailClient) GetEnvelopes(from uint32, to uint32) []imap.Envelope {
 	done := make(chan error,1)
 
 	go func() {
-		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{imap.FetchEnvelope}, messages)
+		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{imap.FetchEnvelope, imap.FetchFlags}, messages)
 	}()
 
-	var envelopes []imap.Envelope
+	var envelopes []Envelope
 
 	for  msg := range messages {
-		envelopes = append(envelopes, *msg.Envelope)
+		envelopes = append(envelopes, Envelope{
+			Envelope: *msg.Envelope,
+			Flags:    msg.Flags,
+		})
+
 	}
 
 	return envelopes
@@ -190,7 +188,7 @@ func(ec *EmailClient) GetPage(page int32, perPage int32) (uint32,uint32) {
 	return from + 1,to
 }
 
-func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32) []imap.Envelope {
+func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32) []Envelope {
 
 	ec.SelectMailBox(ec.Client.Mailbox().Name)
 
@@ -204,13 +202,16 @@ func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32) []imap.Envelope {
 	done := make(chan error,1)
 
 	go func() {
-		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{imap.FetchEnvelope, imap.FetchUid}, messages)
+		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{imap.FetchEnvelope, imap.FetchFlags}, messages)
 	}()
 
-	var envelopes []imap.Envelope
+	var envelopes []Envelope
 
 	for  msg := range messages {
-		envelopes = append(envelopes, *msg.Envelope)
+		envelopes = append(envelopes, Envelope{
+			Envelope: *msg.Envelope,
+			Flags:    msg.Flags,
+		})
 	}
 
 	return envelopes
