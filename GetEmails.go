@@ -389,5 +389,63 @@ func(ec *EmailClient) GetPreviewAndICS(uid uint32, previewCharSize int) (Message
 	return preview, ics, nil
 }
 
+func(ec *EmailClient) GetPreview(uid uint32, previewCharSize int) (MessagePart, error) {
+	body, section, err := ec.GetBody(uid)
+	if err != nil {
+		return MessagePart{}, err
+	}
+
+	r := body.GetBody(&section)
+	if r == nil {
+		return MessagePart{}, errors.New("Server didnt return Message Body, uid:n " +  string(uid))
+	}
+
+	mr, err := mail.CreateReader(r)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var preview MessagePart
+
+	for {
+		p, err := mr.NextPart()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			return MessagePart{}, err
+		}
+
+		switch p.Header.(type) {
+		case *mail.InlineHeader:
+			b, _ := ioutil.ReadAll(p.Body)
+			//log.Println("Got text: ", string(b))
+			if !strings.HasPrefix(string(b),"<") {
+				preview.Name = "text"
+				preview.PartType = "raw"
+				if len(b) > previewCharSize {
+					preview.Part = b[:previewCharSize+1]
+				} else {
+					preview.Part = b
+				}
+			}
+		}
+
+
+	}
+
+	//return "no preview found" message part
+
+	if preview.Name != "text" {
+		preview.Name = "text"
+		preview.PartType = "raw"
+		preview.Part = []byte("No Preview Found")
+	}
+
+
+
+	return preview, nil
+}
+
 
 
