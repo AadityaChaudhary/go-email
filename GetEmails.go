@@ -154,6 +154,8 @@ func(ec *EmailClient) GetBody(uid uint32) (imap.Message, imap.BodySectionName, e
 		return *msg,section, nil
 	}
 
+	log.Println(ec.EmailAddress)
+
 	return imap.Message{},imap.BodySectionName{}, errors.New("message not found")
 
 
