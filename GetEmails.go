@@ -14,6 +14,7 @@ import (
 type Envelope struct {
 	Envelope 	imap.Envelope
 	Flags 		[]string
+	Uid 		uint32
 }
 
 
@@ -115,7 +116,7 @@ func(ec *EmailClient) GetEnvelopes(from uint32, to uint32) []Envelope {
 	done := make(chan error,1)
 
 	go func() {
-		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{imap.FetchEnvelope, imap.FetchFlags}, messages)
+		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{imap.FetchEnvelope, imap.FetchFlags, imap.FetchUid}, messages)
 	}()
 
 	var envelopes []Envelope
@@ -124,6 +125,7 @@ func(ec *EmailClient) GetEnvelopes(from uint32, to uint32) []Envelope {
 		envelopes = append(envelopes, Envelope{
 			Envelope: *msg.Envelope,
 			Flags:    msg.Flags,
+			Uid: 	  msg.Uid,
 		})
 
 	}
@@ -136,6 +138,7 @@ func(ec *EmailClient) GetEnvelopes(from uint32, to uint32) []Envelope {
 func(ec *EmailClient) GetBody(uid uint32) (imap.Message, imap.BodySectionName, error) {
 	seqset := new(imap.SeqSet)
 	seqset.AddNum(uid)
+
 
 	messages := make(chan *imap.Message,10)
 
