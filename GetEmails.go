@@ -98,7 +98,7 @@ func(ec *EmailClient) GetMailBoxes() ([]imap.MailboxInfo, error) {
 //}
 
 func(ec *EmailClient) SelectMailBox(mName string) (error) {
-	_, err :=  ec.Client.Select(mName, true) //readonly on true for safety during testing lol
+	_, err :=  ec.Client.Select(mName, false) //readonly on true for safety during testing lol
 	return err
 
 }
@@ -139,6 +139,13 @@ func(ec *EmailClient) GetBody(uid uint32) (imap.Message, imap.BodySectionName, e
 	seqset := new(imap.SeqSet)
 	seqset.AddNum(uid)
 
+	if ec.Client.Mailbox() != nil {
+		err := ec.SelectMailBox(ec.Client.Mailbox().Name)
+		log.Println(ec.Client.Mailbox().Name)
+		if err != nil {
+			return imap.Message{}, imap.BodySectionName{}, err
+		}
+	}
 
 	messages := make(chan *imap.Message,10)
 
@@ -147,14 +154,12 @@ func(ec *EmailClient) GetBody(uid uint32) (imap.Message, imap.BodySectionName, e
 	var section imap.BodySectionName
 
 	go func() {
-		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{section.FetchItem()}, messages)
+		done <- ec.Client.UidFetch(seqset,[]imap.FetchItem{section.FetchItem()}, messages)
 	}()
 
 	for  msg := range messages {
 		return *msg,section, nil
 	}
-
-	log.Println(ec.EmailAddress)
 
 	return imap.Message{},imap.BodySectionName{}, errors.New("message not found")
 
@@ -166,7 +171,15 @@ func(ec *EmailClient) GetLast(amount uint32) (uint32, uint32) {
 	var from uint32
 	var to uint32
 
-	ec.SelectMailBox(ec.Client.Mailbox().Name)
+	if ec.Client.Mailbox() != nil {
+		ec.SelectMailBox(ec.Client.Mailbox().Name)
+	} else {
+		err := ec.SelectMailBox(ec.Config.Defaults.Inbox)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
 
 
 	if ec.Client.Mailbox().Messages - amount < 0 {
@@ -207,15 +220,16 @@ func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32) []Envelope {
 	done := make(chan error,1)
 
 	go func() {
-		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{imap.FetchEnvelope, imap.FetchFlags}, messages)
+		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{imap.FetchEnvelope, imap.FetchUid, imap.FetchFlags}, messages)
 	}()
 
 	var envelopes []Envelope
 
 	for  msg := range messages {
 		envelopes = append(envelopes, Envelope{
-			Envelope: *msg.Envelope,
-			Flags:    msg.Flags,
+			Envelope: 	*msg.Envelope,
+			Flags:   	msg.Flags,
+			Uid: 		msg.Uid,
 		})
 	}
 
@@ -316,7 +330,7 @@ func(ec *EmailClient) GetPreviewAndICS(uid uint32, previewCharSize int) (Message
 
 	r := body.GetBody(&section)
 	if r == nil {
-		return MessagePart{},MessagePart{}, errors.New("Server didnt return Message Body, uid:n " +  string(uid))
+		return MessagePart{},MessagePart{}, errors.New("Server didnt return Message Body, uid: " +  string(uid))
 	}
 
 	mr, err := mail.CreateReader(r)
