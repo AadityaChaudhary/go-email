@@ -5,12 +5,12 @@ import (
 )
 
 type EmailConfig struct {
-	Defaults 	Defaults 		`json:"defaults"`
-	Smtp 		string			`json:"smtp"`
-	Imap 		string			`json:"imap"`
-	AuthURI		string			`json:"authURI"`
-	ExchangeURI	string			`json:"exchangeURI"`
-	Config 		oauth2.Config	`json:"config"`
+	Defaults 	map[string]string 	`json:"defaults"`
+	Smtp 		string				`json:"smtp"`
+	Imap 		string				`json:"imap"`
+	AuthURI		string				`json:"authURI"`
+	ExchangeURI	string				`json:"exchangeURI"`
+	Config 		oauth2.Config		`json:"config"`
 
 }
 
@@ -18,4 +18,5 @@ type Defaults struct {
 	Inbox 		string 			`json:"inbox"`
 	Trash 		string 			`json:"trash"`
 	Spam 		string 			`json:"spam"`
+
 }

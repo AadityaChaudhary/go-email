@@ -174,7 +174,7 @@ func(ec *EmailClient) GetLast(amount uint32) (uint32, uint32) {
 	if ec.Client.Mailbox() != nil {
 		ec.SelectMailBox(ec.Client.Mailbox().Name)
 	} else {
-		err := ec.SelectMailBox(ec.Config.Defaults.Inbox)
+		err := ec.SelectMailBox(ec.Config.Defaults["inbox"])
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -439,9 +439,9 @@ func(ec *EmailClient) GetPreview(uid uint32, previewCharSize int) (MessagePart, 
 		case *mail.InlineHeader:
 			b, _ := ioutil.ReadAll(p.Body)
 			//log.Println("Got text: ", string(b))
-			if strings.HasPrefix(string(b),"<") {
+			if !strings.HasPrefix(string(b),"<") {
 				preview.Name = "text"
-				preview.PartType = "html"
+				preview.PartType = "raw"
 				if len(b) > previewCharSize {
 					preview.Part = b[:previewCharSize+1]
 				} else {
@@ -457,7 +457,7 @@ func(ec *EmailClient) GetPreview(uid uint32, previewCharSize int) (MessagePart, 
 
 	if preview.Name != "text" {
 		preview.Name = "text"
-		preview.PartType = "html"
+		preview.PartType = "raw"
 		preview.Part = []byte("No Preview Found")
 	}
 
