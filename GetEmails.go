@@ -106,7 +106,8 @@ func(ec *EmailClient) SelectMailBox(mName string) (error) {
 func(ec *EmailClient) GetEnvelopes(from uint32, to uint32) []Envelope {
 
 	if from > ec.Client.Mailbox().Messages || to > ec.Client.Mailbox().Messages {
-		log.Fatal("ruh roh")
+		log.Println("ruh roh")
+		return []Envelope{}
 	}
 	seqset := new(imap.SeqSet)
 	seqset.AddRange(from,to)
