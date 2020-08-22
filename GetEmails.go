@@ -439,9 +439,9 @@ func(ec *EmailClient) GetPreview(uid uint32, previewCharSize int) (MessagePart, 
 		case *mail.InlineHeader:
 			b, _ := ioutil.ReadAll(p.Body)
 			//log.Println("Got text: ", string(b))
-			if !strings.HasPrefix(string(b),"<") {
+			if strings.HasPrefix(string(b),"<") {
 				preview.Name = "text"
-				preview.PartType = "raw"
+				preview.PartType = "html"
 				if len(b) > previewCharSize {
 					preview.Part = b[:previewCharSize+1]
 				} else {
@@ -457,7 +457,7 @@ func(ec *EmailClient) GetPreview(uid uint32, previewCharSize int) (MessagePart, 
 
 	if preview.Name != "text" {
 		preview.Name = "text"
-		preview.PartType = "raw"
+		preview.PartType = "html"
 		preview.Part = []byte("No Preview Found")
 	}
 
