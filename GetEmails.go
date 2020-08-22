@@ -167,14 +167,14 @@ func(ec *EmailClient) GetBody(uid uint32) (imap.Message, imap.BodySectionName, e
 
 }
 
-func(ec *EmailClient) GetLast(amount uint32) (uint32, uint32) {
+func(ec *EmailClient) GetLast(amount uint32, defaultInbox string) (uint32, uint32) {
 	var from uint32
 	var to uint32
 
 	if ec.Client.Mailbox() != nil {
 		ec.SelectMailBox(ec.Client.Mailbox().Name)
 	} else {
-		err := ec.SelectMailBox(ec.Config.Defaults["inbox"])
+		err := ec.SelectMailBox(defaultInbox)
 		if err != nil {
 			log.Fatal(err)
 		}

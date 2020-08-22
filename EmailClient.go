@@ -11,7 +11,7 @@ import (
 )
 
 type EmailClient struct {
-	Config 			EmailConfig
+	Platform 		string
 	Token			*oauth2.Token
 	Client			*client.Client
 	IdleClient 		*idle.Client
@@ -20,30 +20,33 @@ type EmailClient struct {
 
 }
 
-func NewEmailClient(configsPath string, cfg string) (EmailClient,error) {
+func NewEmailClient(cfg string) (EmailClient,error) {
 
 		var emailClient EmailClient
-		emailClient.EmailAddress = cfg
-
-		var configs map[string]EmailConfig
-		if data, err := ioutil.ReadFile(configsPath); err != nil {
-			return EmailClient{}, err
-		} else {
-			err := json.Unmarshal(data,&configs)
-			if err != nil {
-				return EmailClient{}, err
-			}
-		}
-		emailClient.Config = configs[cfg]
-		log.Println(emailClient.Config.Imap)
+		emailClient.Platform = cfg
 
 		return emailClient, nil
 }
 
-func(ec *EmailClient) DialTlsImap() error {
+func NewConfig(configsPath string) (map[string]EmailConfig, error) {
+	var configs map[string]EmailConfig
+	if data, err := ioutil.ReadFile(configsPath); err != nil {
+		return nil, err
+	} else {
+		err := json.Unmarshal(data,&configs)
+		if err != nil {
+			return nil, err
+		} else {
+			return configs, nil
+		}
+	}
+}
+
+
+func(ec *EmailClient) DialTlsImap(imap string) error {
 	var err error
-	log.Println(ec.Config.Imap,": imap")
-	ec.Client, err = client.DialTLS(ec.Config.Imap, nil)
+	log.Println(imap,": imap")
+	ec.Client, err = client.DialTLS(imap, nil)
 	ec.IdleClient = idle.NewClient(ec.Client)
 
 	if err != nil {

@@ -94,7 +94,7 @@ import (
 //	return nil
 //}
 
-func(ec *EmailClient) SendMail(to []string, bcc []string, cc []string, replyTo string, subject string, msgBody string) error {
+func(ec *EmailClient) SendMail(smtpAddress string, to []string, bcc []string, cc []string, replyTo string, subject string, msgBody string) error {
 
 
 	var msg string
@@ -162,7 +162,7 @@ func(ec *EmailClient) SendMail(to []string, bcc []string, cc []string, replyTo s
 	log.Println(msg)
 	msgSend := strings.NewReader(msg)
 
-	err := smtp.SendMail(ec.Config.Smtp,ec.Auth, ec.EmailAddress, Recp, msgSend)
+	err := smtp.SendMail(smtpAddress,ec.Auth, ec.EmailAddress, Recp, msgSend)
 
 	return err
 }

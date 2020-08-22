@@ -11,6 +11,7 @@ type EmailConfig struct {
 	AuthURI		string				`json:"authURI"`
 	ExchangeURI	string				`json:"exchangeURI"`
 	Config 		oauth2.Config		`json:"config"`
+	AltClientId string 				`json:"altClientId"`
 
 }
 

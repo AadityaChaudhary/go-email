@@ -67,9 +67,8 @@ func authenticate(c *client.Client, cfg *oauth2.Config, username string) (sasl.C
 }
 
 
-func(ec *EmailClient) GetToken(code string) error {
-	ec.Config.Config.RedirectURL = ec.Config.ExchangeURI
-	token, err := ec.Config.Config.Exchange(oauth2.NoContext, code)
+func(ec *EmailClient) GetToken(code string, config *oauth2.Config) error {
+	token, err := config.Exchange(oauth2.NoContext, code)
 	if err != nil {
 		return err
 	}
@@ -87,7 +86,7 @@ func(ec *EmailClient) Authenticate(username string) error {
 
 }
 
-func(ec *EmailClient) AllInOneAuth(username string) (oauth2.Token, error) {
+func(ec *EmailClient) AllInOneAuth(username string, config oauth2.Config) (oauth2.Token, error) {
 	spt,err := ec.Client.SupportAuth(sasl.Xoauth2)
 	if err != nil {
 		return oauth2.Token{}, err
@@ -95,11 +94,11 @@ func(ec *EmailClient) AllInOneAuth(username string) (oauth2.Token, error) {
 	if  !spt {
 		return oauth2.Token{}, errors.New("XOAUTH2 not supported by the server")
 	}
-	code, err := oauthdialog.Open(&ec.Config.Config)
+	code, err := oauthdialog.Open(&config)
 	if err != nil {
 		log.Fatal(err)
 	}
-	token, err := ec.Config.Config.Exchange(oauth2.NoContext, code, oauth2.AccessTypeOffline)
+	token, err := config.Exchange(oauth2.NoContext, code, oauth2.AccessTypeOffline)
 	if err != nil {
 		return oauth2.Token{}, err
 	}
