@@ -3,7 +3,6 @@ package go_email
 import (
 	"encoding/json"
 	"github.com/AadityaChaudhary/go-sasl"
-	"github.com/emersion/go-imap-idle"
 	"github.com/emersion/go-imap/client"
 	"golang.org/x/oauth2"
 	"io/ioutil"
@@ -14,7 +13,7 @@ type EmailClient struct {
 	Platform 		string
 	Token			*oauth2.Token
 	Client			*client.Client
-	IdleClient 		*idle.Client
+
 	EmailAddress	string
 	Auth 		 	sasl.Client
 
@@ -47,7 +46,6 @@ func(ec *EmailClient) DialTlsImap(imap string) error {
 	var err error
 	log.Println(imap,": imap")
 	ec.Client, err = client.DialTLS(imap, nil)
-	ec.IdleClient = idle.NewClient(ec.Client)
 
 	if err != nil {
 		return err
