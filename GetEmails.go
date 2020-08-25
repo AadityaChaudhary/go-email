@@ -146,6 +146,8 @@ func(ec *EmailClient) GetBody(uid uint32) (imap.Message, imap.BodySectionName, e
 		if err != nil {
 			return imap.Message{}, imap.BodySectionName{}, err
 		}
+	} else {
+		log.Println("mailbox is nil")
 	}
 
 	messages := make(chan *imap.Message,10)
