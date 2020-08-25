@@ -98,7 +98,7 @@ func(ec *EmailClient) GetMailBoxes() ([]imap.MailboxInfo, error) {
 //}
 
 func(ec *EmailClient) SelectMailBox(mName string) (error) {
-	_, err :=  ec.Client.Select(mName, false) //readonly on true for safety during testing lol
+	_, err :=  ec.Client.Select(mName, true) //readonly on true for safety during testing lol
 	return err
 
 }
