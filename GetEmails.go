@@ -122,7 +122,10 @@ func(ec *EmailClient) GetEnvelopes(from uint32, to uint32) []Envelope {
 
 	var envelopes []Envelope
 
+
+
 	for  msg := range messages {
+		log.Println(msg.Uid,msg.SeqNum, msg.Envelope.Subject)
 		envelopes = append(envelopes, Envelope{
 			Envelope: *msg.Envelope,
 			Flags:    msg.Flags,
@@ -155,7 +158,7 @@ func(ec *EmailClient) GetBody(uid uint32, mbox string) (imap.Message, imap.BodyS
 	var section imap.BodySectionName
 
 	go func() {
-		done <- ec.Client.UidFetch(seqset,[]imap.FetchItem{section.FetchItem()}, messages)
+		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{section.FetchItem()}, messages)
 	}()
 
 	for  msg := range messages {
@@ -221,12 +224,14 @@ func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32) []Envelope {
 	done := make(chan error,1)
 
 	go func() {
-		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{imap.FetchEnvelope, imap.FetchUid, imap.FetchFlags}, messages)
+		done <- ec.Client.UidFetch(seqset,[]imap.FetchItem{imap.FetchEnvelope, imap.FetchUid, imap.FetchFlags}, messages)
 	}()
 
 	var envelopes []Envelope
 
+
 	for  msg := range messages {
+		log.Println(msg.Uid,msg.SeqNum, msg.Envelope.Subject)
 		envelopes = append(envelopes, Envelope{
 			Envelope: 	*msg.Envelope,
 			Flags:   	msg.Flags,
