@@ -136,19 +136,17 @@ func(ec *EmailClient) GetEnvelopes(from uint32, to uint32) []Envelope {
 
 }
 
-func(ec *EmailClient) GetBody(uid uint32) (imap.Message, imap.BodySectionName, error) {
+func(ec *EmailClient) GetBody(uid uint32, mbox string) (imap.Message, imap.BodySectionName, error) {
 	seqset := new(imap.SeqSet)
 	seqset.AddNum(uid)
 
-	if ec.Client.Mailbox() != nil {
-		err := ec.SelectMailBox(ec.Client.Mailbox().Name)
-		log.Println(ec.Client.Mailbox().Name)
+
+		err := ec.SelectMailBox(mbox)
+
 		if err != nil {
 			return imap.Message{}, imap.BodySectionName{}, err
 		}
-	} else {
-		log.Println("mailbox is nil")
-	}
+
 
 	messages := make(chan *imap.Message,10)
 
