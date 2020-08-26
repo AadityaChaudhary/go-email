@@ -158,7 +158,7 @@ func(ec *EmailClient) GetBody(uid uint32, mbox string) (imap.Message, imap.BodyS
 	var section imap.BodySectionName
 
 	go func() {
-		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{section.FetchItem()}, messages)
+		done <- ec.Client.UidFetch(seqset,[]imap.FetchItem{section.FetchItem()}, messages)
 	}()
 
 	for  msg := range messages {
