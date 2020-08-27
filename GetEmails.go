@@ -212,9 +212,12 @@ func(ec *EmailClient) GetPage(page int32, perPage int32) (uint32,uint32) {
 	return from + 1,to
 }
 
-func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32) []Envelope {
+func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32, mailbox string) []Envelope {
 
-	ec.SelectMailBox(ec.Client.Mailbox().Name)
+	err := ec.SelectMailBox(mailbox)
+	if err != nil {
+		return nil
+	}
 
 	seqset := new(imap.SeqSet)
 	for _, val := range msgs {
