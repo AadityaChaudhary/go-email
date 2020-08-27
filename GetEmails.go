@@ -15,6 +15,7 @@ type Envelope struct {
 	Envelope 	imap.Envelope
 	Flags 		[]string
 	Uid 		uint32
+	Mbox 		string
 }
 
 
@@ -127,9 +128,10 @@ func(ec *EmailClient) GetEnvelopes(from uint32, to uint32) []Envelope {
 	for  msg := range messages {
 		log.Println(msg.Uid,msg.SeqNum, msg.Envelope.Subject)
 		envelopes = append(envelopes, Envelope{
-			Envelope: *msg.Envelope,
-			Flags:    msg.Flags,
-			Uid: 	  msg.Uid,
+			Envelope: 	*msg.Envelope,
+			Flags:    	msg.Flags,
+			Uid: 	  	msg.Uid,
+			Mbox: 	  	ec.Client.Mailbox().Name,
 		})
 
 	}
@@ -236,6 +238,7 @@ func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32) []Envelope {
 			Envelope: 	*msg.Envelope,
 			Flags:   	msg.Flags,
 			Uid: 		msg.Uid,
+			Mbox: 		ec.Client.Mailbox().Name,
 		})
 	}
 
