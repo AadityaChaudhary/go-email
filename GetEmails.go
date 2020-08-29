@@ -16,6 +16,7 @@ type Envelope struct {
 	Flags 		[]string
 	Uid 		uint32
 	Mbox 		string
+	Address 	string
 }
 
 
@@ -132,6 +133,7 @@ func(ec *EmailClient) GetEnvelopes(from uint32, to uint32) []Envelope {
 			Flags:    	msg.Flags,
 			Uid: 	  	msg.Uid,
 			Mbox: 	  	ec.Client.Mailbox().Name,
+			Address:    ec.EmailAddress,
 		})
 
 	}
@@ -242,6 +244,7 @@ func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32, mailbox string) []Envel
 			Flags:   	msg.Flags,
 			Uid: 		msg.Uid,
 			Mbox: 		ec.Client.Mailbox().Name,
+			Address:    ec.EmailAddress,
 		})
 	}
 
