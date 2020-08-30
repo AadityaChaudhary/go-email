@@ -214,7 +214,7 @@ func(ec *EmailClient) GetPage(page int32, perPage int32) (uint32,uint32) {
 	return from + 1,to
 }
 
-func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32, mailbox string) []Envelope {
+func(ec *EmailClient) GetEnvelopesFromUIDArr(msgs []uint32, mailbox string) []Envelope {
 
 	err := ec.SelectMailBox(mailbox)
 	if err != nil {
@@ -232,6 +232,45 @@ func(ec *EmailClient) GetEnvelopesFromArr(msgs []uint32, mailbox string) []Envel
 
 	go func() {
 		done <- ec.Client.UidFetch(seqset,[]imap.FetchItem{imap.FetchEnvelope, imap.FetchUid, imap.FetchFlags}, messages)
+	}()
+
+	var envelopes []Envelope
+
+
+	for  msg := range messages {
+		log.Println(msg.Uid,msg.SeqNum, msg.Envelope.Subject)
+		envelopes = append(envelopes, Envelope{
+			Envelope: 	*msg.Envelope,
+			Flags:   	msg.Flags,
+			Uid: 		msg.Uid,
+			Mbox: 		ec.Client.Mailbox().Name,
+			Address:    ec.EmailAddress,
+		})
+	}
+
+	return envelopes
+
+
+}
+
+func(ec *EmailClient) GetEnvelopesFromSeqArr(msgs []uint32, mailbox string) []Envelope {
+
+	err := ec.SelectMailBox(mailbox)
+	if err != nil {
+		return nil
+	}
+
+	seqset := new(imap.SeqSet)
+	for _, val := range msgs {
+		seqset.AddNum(val)
+	}
+
+	messages := make(chan *imap.Message,10)
+
+	done := make(chan error,1)
+
+	go func() {
+		done <- ec.Client.Fetch(seqset,[]imap.FetchItem{imap.FetchEnvelope, imap.FetchUid, imap.FetchFlags}, messages)
 	}()
 
 	var envelopes []Envelope
