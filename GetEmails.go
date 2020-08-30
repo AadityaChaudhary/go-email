@@ -214,11 +214,11 @@ func(ec *EmailClient) GetPage(page int32, perPage int32) (uint32,uint32) {
 	return from + 1,to
 }
 
-func(ec *EmailClient) GetEnvelopesFromUIDArr(msgs []uint32, mailbox string) []Envelope {
+func(ec *EmailClient) GetEnvelopesFromUIDArr(msgs []uint32, mailbox string) ([]Envelope, error) {
 
 	err := ec.SelectMailBox(mailbox)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	seqset := new(imap.SeqSet)
@@ -248,16 +248,16 @@ func(ec *EmailClient) GetEnvelopesFromUIDArr(msgs []uint32, mailbox string) []En
 		})
 	}
 
-	return envelopes
+	return envelopes, nil
 
 
 }
 
-func(ec *EmailClient) GetEnvelopesFromSeqArr(msgs []uint32, mailbox string) []Envelope {
+func(ec *EmailClient) GetEnvelopesFromSeqArr(msgs []uint32, mailbox string) ([]Envelope, error) {
 
 	err := ec.SelectMailBox(mailbox)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	seqset := new(imap.SeqSet)
@@ -287,7 +287,7 @@ func(ec *EmailClient) GetEnvelopesFromSeqArr(msgs []uint32, mailbox string) []En
 		})
 	}
 
-	return envelopes
+	return envelopes, nil
 
 
 }
