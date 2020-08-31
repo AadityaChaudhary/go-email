@@ -91,7 +91,7 @@ func(ec *EmailClient) SearchByCrit(crit Crit) ([]uint32, error) {
 		return nil, err
 	}
 	resp, err := ec.Client.Search(criteria)
-	return resp, err
+	return resp, err //returns seqnums
 }
 
 

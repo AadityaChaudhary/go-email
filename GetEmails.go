@@ -277,7 +277,7 @@ func(ec *EmailClient) GetEnvelopesFromSeqArr(msgs []uint32, mailbox string) ([]E
 
 
 	for  msg := range messages {
-		log.Println(msg.Uid,msg.SeqNum, msg.Envelope.Subject)
+		//log.Println(msg.Uid,msg.SeqNum, msg.Envelope.Subject)
 		envelopes = append(envelopes, Envelope{
 			Envelope: 	*msg.Envelope,
 			Flags:   	msg.Flags,
@@ -520,5 +520,45 @@ func(ec *EmailClient) GetPreview(uid uint32, previewCharSize int, mbox string) (
 	return preview, nil
 }
 
+func(ec *EmailClient) GetHtml(uid uint32, mbox string) (string, error) {
+	body, section, err := ec.GetBody(uid, mbox)
+	if err != nil {
+		return "", err
+	}
+
+	r := body.GetBody(&section)
+	if r == nil {
+		return "", errors.New("Server didnt return Message Body, uid:n " +  string(uid))
+	}
+
+	mr, err := mail.CreateReader(r)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for {
+		p, err := mr.NextPart()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			return "", err
+		}
+
+		switch p.Header.(type) {
+		case *mail.InlineHeader:
+			b, _ := ioutil.ReadAll(p.Body)
+			//log.Println("Got text: ", string(b))
+			if strings.HasPrefix(string(b),"<") {
+				return string(b), nil
+			}
+		}
+
+
+	}
+
+
+	return "", errors.New("html not found")
+}
 
 
