@@ -22,7 +22,9 @@ type Envelope struct {
 
 
 type Message struct {
-	Parts 		[]MessagePart
+	Attachments 		[]MessagePart
+	Html 		MessagePart
+	Raw 		MessagePart
 	//Envelope 	imap.Envelope
 }
 
@@ -32,21 +34,21 @@ type MessagePart struct {
 	Part 		[]byte
 }
 
-func(m *Message) Print() {
-	//log.Println("Date: ", m.Envelope.Sent)
-	//log.Println("Subject: ", m.Envelope.Subject)
-	//log.Println("To: ", m.Envelope.To)
-	//log.Println("From: ", m.Envelope.From)
-	//log.Println("CC: ", m.Envelope.Cc)
-	//log.Println("BCC: ", m.Envelope.Bcc)
-
-	for _, part := range m.Parts {
-		log.Println("---------------------")
-		log.Println("Type: ", part.PartType)
-		log.Println("Name: ", part.Name)
-		log.Println("data: ", string(part.Part))
-	}
-}
+//func(m *Message) Print() {
+//	//log.Println("Date: ", m.Envelope.Sent)
+//	//log.Println("Subject: ", m.Envelope.Subject)
+//	//log.Println("To: ", m.Envelope.To)
+//	//log.Println("From: ", m.Envelope.From)
+//	//log.Println("CC: ", m.Envelope.Cc)
+//	//log.Println("BCC: ", m.Envelope.Bcc)
+//
+//	for _, part := range m.Parts {
+//		log.Println("---------------------")
+//		log.Println("Type: ", part.PartType)
+//		log.Println("Name: ", part.Name)
+//		log.Println("data: ", string(part.Part))
+//	}
+//}
 
 func(ec *EmailClient) GetMailBoxes() ([]imap.MailboxInfo, error) {
 	var mboxs []imap.MailboxInfo
@@ -354,11 +356,16 @@ func(ec *EmailClient) ParseMessage(msg imap.Message, section imap.BodySectionNam
 			//log.Println("Got text: ", string(b))
 			if strings.HasPrefix(string(b),"<") {
 				part.PartType = "html"
+				part.Name = "text"
+				part.Part = b
+				message.Html = part
 			} else {
 				part.PartType = "raw"
+				part.Name = "text"
+				part.Part = b
+				message.Raw = part
 			}
-			part.Name = "text"
-			part.Part = b
+
 		case *mail.AttachmentHeader:
 			filename, _ := h.Filename()
 			//log.Println("Got Attachment: ", filename)
@@ -366,10 +373,8 @@ func(ec *EmailClient) ParseMessage(msg imap.Message, section imap.BodySectionNam
 			part.PartType = "attachment"
 			part.Name = filename
 			part.Part = b
-
+			message.Attachments = append(message.Attachments, part)
 		}
-
-		message.Parts = append(message.Parts, part)
 
 	}
 
