@@ -355,11 +355,13 @@ func(ec *EmailClient) ParseMessage(msg imap.Message, section imap.BodySectionNam
 			b, _ := ioutil.ReadAll(p.Body)
 			//log.Println("Got text: ", string(b))
 			if strings.HasPrefix(string(b),"<") {
+				log.Println("html part")
 				part.PartType = "html"
 				part.Name = "text"
 				part.Part = b
 				message.Html = part
 			} else {
+				log.Println("raw part")
 				part.PartType = "raw"
 				part.Name = "text"
 				part.Part = b
@@ -374,6 +376,7 @@ func(ec *EmailClient) ParseMessage(msg imap.Message, section imap.BodySectionNam
 			part.Name = filename
 			part.Part = b
 			message.Attachments = append(message.Attachments, part)
+			log.Println("attachment part")
 		}
 
 	}
