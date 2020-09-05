@@ -25,6 +25,7 @@ type Message struct {
 	Attachments 		[]MessagePart
 	Html 		MessagePart
 	Raw 		MessagePart
+	Header 		mail.Header
 	//Envelope 	imap.Envelope
 }
 
@@ -306,7 +307,8 @@ func(ec *EmailClient) ParseMessage(msg imap.Message, section imap.BodySectionNam
 		log.Fatal(err)
 	}
 
-	//header := mr.Header
+
+	message.Header = mr.Header
 	//if date, err := header.Date(); err == nil {
 	//	log.Println("date: ", date)
 	//	message.Envelope.Sent = date
