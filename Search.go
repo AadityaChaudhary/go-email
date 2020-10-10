@@ -2,7 +2,6 @@ package go_email
 
 import (
 	"github.com/emersion/go-imap"
-	"log"
 	"time"
 )
 
@@ -66,18 +65,14 @@ func(ec *EmailClient) GetByUID(uid uint32) ([]uint32, error) {
 
 }
 
-func(ec *EmailClient) GetByMessageId(messageId string) ([]uint32, error) {
+func(ec *EmailClient) GetByMessageId(messageId string, mbox string) ([]uint32, error) {
 	crit := imap.NewSearchCriteria()
 
 	crit.Header.Set("Message-ID", messageId)
 
-	if ec.Client.Mailbox() == nil{
-		log.Println("mailbox nil in getBy message id")
-	} else {
-		err := ec.SelectMailBox(ec.Client.Mailbox().Name)
-		if err != nil {
-			return []uint32{}, err
-		}
+	err := ec.SelectMailBox(mbox)
+	if err != nil {
+		return nil, err
 	}
 
 	resp, err := ec.Client.Search(crit)
